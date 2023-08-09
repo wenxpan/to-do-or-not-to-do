@@ -1,0 +1,14 @@
+node_modules
+.env
+package-lock.json
+.DS_Store
+
+*.log
+*.gz
+
+# Coveralls
+.nyc_output
+coverage
+
+# Benchmarking
+benchmarks/graphs
