@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react"
 import { Link } from "react-router-dom"
 import TaskContext from "../contexts/TaskContext"
+import { putTask } from "../services/tasksService"
 
 const ShowTask = ({ task }) => {
   if (task) {
@@ -9,11 +10,11 @@ const ShowTask = ({ task }) => {
     const { tasksDispatch } = useContext(TaskContext)
 
     async function handleSaveTask() {
-      // await putTask(editedTask)
+      const newTask = await putTask(editedTask)
       console.log(editedTask)
       tasksDispatch({
         type: "update_task",
-        task: editedTask
+        task: newTask
       })
       setEditing((prev) => !prev)
     }
@@ -136,16 +137,60 @@ const ShowTask = ({ task }) => {
     let progressContent
     if (!editing) {
       progressContent = task.progress.length ? (
-        task.progress.map((p) => (
-          <>
-            <p>{p.date.slice(0, 10)}</p>
-            <p>{p.description}</p>
-          </>
-        ))
+        <ul>
+          {task.progress.map((p) => (
+            <li key={p._id}>{p.description}</li>
+          ))}
+        </ul>
       ) : (
         <p>None</p>
       )
     } else {
+      // editing mode
+      progressContent = (
+        <>
+          {editedTask.progress.map((p, index) => (
+            <div key={index}>
+              <input
+                value={p.description}
+                onChange={(e) =>
+                  setEditedTask((prev) => ({
+                    ...prev,
+                    progress: [
+                      ...prev.progress.map((pro) =>
+                        pro === p ? { ...p, description: e.target.value } : pro
+                      )
+                    ]
+                  }))
+                }
+              ></input>
+              <button
+                onClick={() =>
+                  setEditedTask((prev) => ({
+                    ...prev,
+                    progress: prev.progress.filter((pro) => pro !== p)
+                  }))
+                }
+              >
+                delete
+              </button>
+              <br />
+            </div>
+          ))}
+          {/* <input placeholder="new progress"></input> */}
+          <button
+            onClick={() =>
+              setEditedTask((prev) => ({
+                ...prev,
+                progress: [...prev.progress, { description: "" }]
+              }))
+            }
+          >
+            Add new
+          </button>
+          <br />
+        </>
+      )
     }
 
     return (
