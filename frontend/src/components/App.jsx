@@ -7,6 +7,9 @@ import ShowTask from "../pages/ShowTask"
 import TaskContext from "../contexts/TaskContext.js"
 import { getTasks } from "../services/tasksService"
 import Home from "../pages/Home"
+import Navbar from "./Navbar"
+import Archive from "../pages/Archive"
+import NewTask from "../pages/NewTask"
 
 function App() {
   const [tasks, tasksDispatch] = useReducer(taskReducer, [])
@@ -23,14 +26,15 @@ function App() {
   return (
     <>
       <TaskContext.Provider value={{ tasks, tasksDispatch }}>
+        <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tasks">
             <Route index element={<AllTasks />} />
-            <Route path="new" />
+            <Route path="new" element={<NewTask />} />
             <Route path=":id" element={<ShowTaskWrapper />} />
           </Route>
-          <Route path="archive" />
+          <Route path="archive" element={<Archive />} />
         </Routes>
       </TaskContext.Provider>
     </>

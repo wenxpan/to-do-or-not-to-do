@@ -52,6 +52,7 @@ const TaskLine = ({ task }) => {
           setEditedTask((prev) => ({ ...prev, title: e.target.value }))
         }
       ></input>
+      <br />
       <button onClick={handleSaveTask}>save</button>
       <button
         onClick={() => {

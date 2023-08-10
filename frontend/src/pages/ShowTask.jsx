@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import TaskContext from "../contexts/TaskContext"
 import { putTask } from "../services/tasksService"
 
 const ShowTask = ({ task }) => {
   if (task) {
+    const location = useLocation()
     const [editedTask, setEditedTask] = useState(task)
-    const [editing, setEditing] = useState(false)
+    const [editing, setEditing] = useState(
+      location.state.editing ? location.state.editing : false
+    )
     const { tasksDispatch } = useContext(TaskContext)
 
     async function handleSaveTask() {
