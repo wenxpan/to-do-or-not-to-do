@@ -33,6 +33,22 @@ const ShowTask = ({ task }) => {
       <h2>{task.title}</h2>
     )
 
+    const tagContent = editing ? (
+      <>
+        <textarea
+          value={editedTask.tags.join(", ")}
+          onChange={(e) =>
+            setEditedTask((prev) => {
+              const splittedArray = e.target.value.split(", ")
+              return { ...prev, tags: splittedArray }
+            })
+          }
+        ></textarea>
+      </>
+    ) : (
+      <p>tags: {task.tags.join(", ")}</p>
+    )
+
     const completedContent = editing ? (
       <>
         <p>Completed:</p>
@@ -199,7 +215,7 @@ const ShowTask = ({ task }) => {
           <button>Back to list</button>
         </Link>
         {titleContent}
-        <p>tags: {task.tags.join(", ")}</p>
+        {tagContent}
         <p>date added: {task.dateAdded.slice(0, 10)}</p>
         {completedContent}
         {archivedContent}
