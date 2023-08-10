@@ -1,5 +1,5 @@
 import express from "express"
-import itemRoutes from "./routes/item_routes.js"
+import taskRoutes from "./routes/task_routes.js"
 import cors from "cors"
 
 const app = express()
@@ -12,6 +12,6 @@ app.use(express.json())
 
 app.get("/", (req, res) => response.send({ info: "To do or not to do API!" }))
 
-app.use("/items", itemRoutes)
+app.use("/tasks", taskRoutes)
 
 app.listen(port)

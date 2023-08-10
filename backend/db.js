@@ -23,17 +23,18 @@ const progressSchema = new mongoose.Schema({
   description: { type: String, required: true }
 })
 
-const itemSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
   title: { type: String, required: true },
   dateAdded: { type: Date, default: Date.now },
-  status: { type: String, required: true },
+  isCompleted: { type: Boolean, default: false },
+  isArchived: { type: Boolean, default: false },
   delayReason: { type: String },
   doReason: { type: String },
   additionalInfo: { type: String },
-  tags: { type: Array },
+  tags: [String],
   progress: [progressSchema]
 })
 
-const itemModel = mongoose.model("Item", itemSchema)
+const taskModel = mongoose.model("Task", taskSchema)
 
-export { itemModel, dbClose }
+export { taskModel, dbClose }
