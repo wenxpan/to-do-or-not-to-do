@@ -1,66 +1,61 @@
-import { useReducer, useState } from "react"
+import { useEffect, useReducer, useState } from "react"
+import { Routes, Route } from "react-router-dom"
 import "../css/App.css"
 import taskReducer from "../reducers/taskReducer"
+import Tasks from "../pages/Tasks"
+import TaskContext from "../contexts/TaskContext.js"
+import { getTasks } from "../services/tasksService"
 
 function App() {
-  const [tasks, taskDispatch] = useReducer(taskReducer, initialTasks)
-  const [newTask, setNewTask] = useState({ title: "" })
+  const [tasks, tasksDispatch] = useReducer(taskReducer, [])
 
-  function handleAddTask(task) {
-    taskDispatch({
-      type: "add_task",
-      task: task
-    })
-    setNewTask({ title: "" })
-  }
-
-  function handleDeleteTask(task) {
-    taskDispatch({
-      type: "delete_task",
-      task: task
-    })
-  }
-
-  function handleCompleteTask(task) {
-    taskDispatch({
-      type: "toggle_completed",
-      task: task
-    })
-  }
-
-  function handleArchiveTask(task) {
-    taskDispatch({
-      type: "toggle_archived",
-      task: task
-    })
-  }
+  useEffect(() => {
+    getTasks().then((tasks) => tasksDispatch({ type: "set_tasks", tasks }))
+  }, [])
 
   return (
     <>
-      <h1>To do or not to do</h1>
-      <input
-        value={newTask.title}
-        onChange={(e) =>
-          setNewTask((prev) => ({ ...prev, title: e.target.value }))
-        }
-        placeholder="add task"
-      ></input>
-      <button onClick={() => handleAddTask(newTask)}>Add task</button>
-      <h2>All tasks:</h2>
-      {tasks.map((t) => (
-        <div key={t._id}>
-          <p>{t.title}</p>
-          <p>Completed: {t.isCompleted ? "Yes" : "No"}</p>
-          <p>Archived: {t.isArchived ? "Yes" : "No"}</p>
-          <button>edit</button>
-          <button onClick={() => handleDeleteTask(t)}>delete</button>
-          <button onClick={() => handleCompleteTask(t)}>toggle complete</button>
-          <button onClick={() => handleArchiveTask(t)}>toggle archive</button>
-        </div>
-      ))}
+      <TaskContext.Provider value={{ tasks, tasksDispatch }}>
+        <h1>To do or not to do</h1>
+        <Routes>
+          <Route path="/" />
+          <Route path="/tasks" element={<Tasks />}>
+            <Route path="new" />
+            <Route path=":id" />
+          </Route>
+          <Route path="archive" />
+        </Routes>
+      </TaskContext.Provider>
     </>
   )
 }
+
+// const [newTask, setNewTask] = useState({ title: "" })
+
+// const testContent = (
+//   <>
+//     <input
+//       value={newTask.title}
+//       onChange={(e) =>
+//         setNewTask((prev) => ({ ...prev, title: e.target.value }))
+//       }
+//       placeholder="add task"
+//     ></input>
+//     <button onClick={() => handleAddTask(newTask)}>Add task</button>
+//     <h2>All tasks:</h2>
+//     {tasks.map((t) => (
+//       <div key={t._id}>
+//         <p>{t.title}</p>
+//         <p>Completed: {t.isCompleted ? "Yes" : "No"}</p>
+//         <p>Archived: {t.isArchived ? "Yes" : "No"}</p>
+//         <button>edit</button>
+//         <button onClick={() => handleDeleteTask(t)}>delete</button>
+//         <button onClick={() => handleCompleteTask(t)}>toggle complete</button>
+//         <button onClick={() => handleArchiveTask(t)}>toggle archive</button>
+//       </div>
+//     ))}
+//   </>
+// )
 
 const initialTasks = [
   {

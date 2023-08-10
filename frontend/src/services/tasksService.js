@@ -4,14 +4,14 @@ export const getTasks = async () => {
   return await getHelper("/tasks/")
 }
 
-export const createTask = async (taskJson) => {
-  return await postHelper("/tasks/", taskJson)
+export const postTask = async (task) => {
+  return await postHelper("/tasks/", task)
 }
 
 export const deleteTask = async (id) => {
   return await deleteHelper("/tasks/", id)
 }
 
-export const updateTask = async (taskJson) => {
-  return await putHelper("/tasks/", taskJson)
+export const putTask = async (task) => {
+  return await putHelper("/tasks/", task)
 }

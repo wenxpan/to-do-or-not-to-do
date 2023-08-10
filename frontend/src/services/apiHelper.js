@@ -6,11 +6,11 @@ export const getHelper = async (endpoint) => {
   return data
 }
 
-export const postHelper = async (endpoint, collectionJson) => {
+export const postHelper = async (endpoint, collection) => {
   const res = await fetch(`${baseURL}${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(collectionJson)
+    body: JSON.stringify(collection)
   })
   const data = await res.json()
   return data
@@ -20,15 +20,15 @@ export const deleteHelper = async (endpoint, id) => {
   const res = await fetch(`${baseURL}${endpoint}${id}`, {
     method: "DELETE"
   })
-  const data = await res.json()
-  return data
+  // const data = await res.json()
+  return res
 }
 
-export const putHelper = async (endpoint, collectionJson) => {
-  const res = await fetch(`${baseURL}${endpoint}${collectionJson.id}`, {
+export const putHelper = async (endpoint, collection) => {
+  const res = await fetch(`${baseURL}${endpoint}${collection._id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(collectionJson)
+    body: JSON.stringify(collection)
   })
   const data = await res.json() //return updated item
   return data
