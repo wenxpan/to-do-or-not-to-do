@@ -1,10 +1,12 @@
 import { useEffect, useReducer, useState } from "react"
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useParams } from "react-router-dom"
 import "../css/App.css"
 import taskReducer from "../reducers/taskReducer"
-import Tasks from "../pages/Tasks"
+import AllTasks from "../pages/AllTasks"
+import ShowTask from "../pages/ShowTask"
 import TaskContext from "../contexts/TaskContext.js"
 import { getTasks } from "../services/tasksService"
+import Home from "../pages/Home"
 
 function App() {
   const [tasks, tasksDispatch] = useReducer(taskReducer, [])
@@ -13,15 +15,20 @@ function App() {
     getTasks().then((tasks) => tasksDispatch({ type: "set_tasks", tasks }))
   }, [])
 
+  function ShowTaskWrapper() {
+    const { id } = useParams()
+    return <ShowTask task={tasks.find((t) => t._id === id)} />
+  }
+
   return (
     <>
       <TaskContext.Provider value={{ tasks, tasksDispatch }}>
-        <h1>To do or not to do</h1>
         <Routes>
-          <Route path="/" />
-          <Route path="/tasks" element={<Tasks />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/tasks">
+            <Route index element={<AllTasks />} />
             <Route path="new" />
-            <Route path=":id" />
+            <Route path=":id" element={<ShowTaskWrapper />} />
           </Route>
           <Route path="archive" />
         </Routes>

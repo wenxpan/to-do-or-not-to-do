@@ -3,8 +3,7 @@ import TaskContext from "../contexts/TaskContext"
 import TaskLine from "../components/TaskLine"
 import AddTaskLine from "../components/AddTaskLine"
 
-const Tasks = () => {
-  console.log("rendered")
+const AllTasks = () => {
   const { tasks } = useContext(TaskContext)
   const todoTasks = tasks.filter(
     (t) => t.isCompleted === false && t.isArchived === false
@@ -27,4 +26,4 @@ const Tasks = () => {
   )
 }
 
-export default Tasks
+export default AllTasks

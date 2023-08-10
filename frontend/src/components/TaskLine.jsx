@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react"
 import TaskContext from "../contexts/TaskContext"
 import { deleteTask, putTask } from "../services/tasksService"
+import { Link } from "react-router-dom"
 
 const TaskLine = ({ task }) => {
   const { tasksDispatch } = useContext(TaskContext)
@@ -74,6 +75,9 @@ const TaskLine = ({ task }) => {
         {editableContent}
         {/* <p>Completed: {task.isCompleted ? "Yes" : "No"}</p>
           <p>Archived: {task.isArchived ? "Yes" : "No"}</p> */}
+        <Link to={`/tasks/${task._id}`}>
+          <button>view</button>
+        </Link>
         <button onClick={() => handleDeleteTask(task)}>delete</button>
         <button onClick={() => handleCompleteTask(task)}>
           toggle complete
