@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import TaskContext from "../contexts/TaskContext"
 import { putTask } from "../services/tasksService"
+import ProgressLine from "../components/ProgressLine"
 
 const ShowTask = ({ task }) => {
   if (task) {
@@ -12,7 +13,8 @@ const ShowTask = ({ task }) => {
     )
     const { tasksDispatch } = useContext(TaskContext)
 
-    async function handleSaveTask() {
+    async function handleUpdateTask() {
+      // when clicking save button
       const newTask = await putTask(editedTask)
       tasksDispatch({
         type: "update_task",
@@ -21,13 +23,19 @@ const ShowTask = ({ task }) => {
       setEditing((prev) => !prev)
     }
 
+    function handleChange(changedPart) {
+      // when onChange happens in each field
+      setEditedTask((prev) => ({ ...prev, ...changedPart }))
+    }
+
     //TODO: make editable fields dry
     const titleContent = editing ? (
       <h2>
         <textarea
           value={editedTask.title}
-          onChange={(e) =>
-            setEditedTask((prev) => ({ ...prev, title: e.target.value }))
+          onChange={
+            (e) => handleChange({ title: e.target.value })
+            // setEditedTask((prev) => ({ ...prev, title: e.target.value }))
           }
         ></textarea>
       </h2>
@@ -39,12 +47,7 @@ const ShowTask = ({ task }) => {
       <>
         <textarea
           value={editedTask.tags.join(", ")}
-          onChange={(e) =>
-            setEditedTask((prev) => {
-              const splittedArray = e.target.value.split(", ")
-              return { ...prev, tags: splittedArray }
-            })
-          }
+          onChange={(e) => handleChange({ tags: e.target.value.split(", ") })}
         ></textarea>
       </>
     ) : (
@@ -60,12 +63,7 @@ const ShowTask = ({ task }) => {
           type="radio"
           name="isCompleted"
           id="completed"
-          onChange={(e) =>
-            setEditedTask((prev) => ({
-              ...prev,
-              isCompleted: !prev.isCompleted
-            }))
-          }
+          onChange={(e) => handleChange({ isCompleted: true })}
         />
         <label htmlFor="not_completed">No</label>
         <input
@@ -73,12 +71,7 @@ const ShowTask = ({ task }) => {
           type="radio"
           name="isCompleted"
           id="not_completed"
-          onChange={(e) =>
-            setEditedTask((prev) => ({
-              ...prev,
-              isCompleted: !prev.isCompleted
-            }))
-          }
+          onChange={(e) => handleChange({ isCompleted: false })}
         />
       </>
     ) : (
@@ -94,12 +87,7 @@ const ShowTask = ({ task }) => {
           type="radio"
           name="isArchived"
           id="archived"
-          onChange={(e) =>
-            setEditedTask((prev) => ({
-              ...prev,
-              isArchived: !prev.isArchived
-            }))
-          }
+          onChange={(e) => handleChange({ isArchived: true })}
         />
         <label htmlFor="not_archived">No</label>
         <input
@@ -107,12 +95,7 @@ const ShowTask = ({ task }) => {
           type="radio"
           name="isArchived"
           id="not_archived"
-          onChange={(e) =>
-            setEditedTask((prev) => ({
-              ...prev,
-              isArchived: !prev.isArchived
-            }))
-          }
+          onChange={(e) => handleChange({ isArchived: false })}
         />
       </>
     ) : (
@@ -122,9 +105,7 @@ const ShowTask = ({ task }) => {
     const doContent = editing ? (
       <textarea
         value={editedTask.doReason}
-        onChange={(e) =>
-          setEditedTask((prev) => ({ ...prev, doReason: e.target.value }))
-        }
+        onChange={(e) => handleChange({ doReason: e.target.value })}
       ></textarea>
     ) : (
       <p>{task.doReason}</p>
@@ -133,9 +114,7 @@ const ShowTask = ({ task }) => {
     const delayContent = editing ? (
       <textarea
         value={editedTask.delayReason}
-        onChange={(e) =>
-          setEditedTask((prev) => ({ ...prev, delayReason: e.target.value }))
-        }
+        onChange={(e) => handleChange({ delayReason: e.target.value })}
       ></textarea>
     ) : (
       <p>{task.delayReason}</p>
@@ -144,72 +123,11 @@ const ShowTask = ({ task }) => {
     const additionalContent = editing ? (
       <textarea
         value={editedTask.additionalInfo}
-        onChange={(e) =>
-          setEditedTask((prev) => ({ ...prev, additionalInfo: e.target.value }))
-        }
+        onChange={(e) => handleChange({ additionalInfo: e.target.value })}
       ></textarea>
     ) : (
       <p>{task.additionalInfo}</p>
     )
-
-    let progressContent
-    if (!editing) {
-      progressContent = task.progress.length ? (
-        <ul>
-          {task.progress.map((p) => (
-            <li key={p._id}>{p.description}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>None</p>
-      )
-    } else {
-      // editing mode
-      progressContent = (
-        <>
-          {editedTask.progress.map((p, index) => (
-            <div key={index}>
-              <input
-                value={p.description}
-                onChange={(e) =>
-                  setEditedTask((prev) => ({
-                    ...prev,
-                    progress: [
-                      ...prev.progress.map((pro) =>
-                        pro === p ? { ...p, description: e.target.value } : pro
-                      )
-                    ]
-                  }))
-                }
-              ></input>
-              <button
-                onClick={() =>
-                  setEditedTask((prev) => ({
-                    ...prev,
-                    progress: prev.progress.filter((pro) => pro !== p)
-                  }))
-                }
-              >
-                delete
-              </button>
-              <br />
-            </div>
-          ))}
-          {/* <input placeholder="new progress"></input> */}
-          <button
-            onClick={() =>
-              setEditedTask((prev) => ({
-                ...prev,
-                progress: [...prev.progress, { description: "" }]
-              }))
-            }
-          >
-            Add new
-          </button>
-          <br />
-        </>
-      )
-    }
 
     return (
       <div>
@@ -228,11 +146,11 @@ const ShowTask = ({ task }) => {
         <h3>Notes</h3>
         {additionalContent}
         <h3>Progress:</h3>
-        {progressContent}
+        <ProgressLine props={{ editing, task, editedTask, setEditedTask }} />
         <button onClick={() => setEditing((prev) => !prev)}>
           {editing ? "Cancel" : "Edit"}
         </button>
-        {editing ? <button onClick={handleSaveTask}>Save</button> : ""}
+        {editing ? <button onClick={handleUpdateTask}>Save</button> : ""}
       </div>
     )
   }
