@@ -27,6 +27,7 @@ const ShowTask = ({ task }) => {
     }
 
     function getProps(area) {
+      // return props to be passed to child componenets
       const fieldDesc = {
         doReason: "What can you achieve by doing it?",
         delayReason: "What keeps you from doing it?",
@@ -61,7 +62,6 @@ const ShowTask = ({ task }) => {
       editedTaskDispatch({ type: "update_area", area, value })
     }
 
-    //TODO: make editable fields dry
     const titleContent = editing ? (
       <>
         <h2>Title:</h2>
