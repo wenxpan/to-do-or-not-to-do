@@ -8,13 +8,12 @@ const ShowTask = ({ task }) => {
     const location = useLocation()
     const [editedTask, setEditedTask] = useState(task)
     const [editing, setEditing] = useState(
-      location.state.editing ? location.state.editing : false
+      location.state ? location.state.editing : false
     )
     const { tasksDispatch } = useContext(TaskContext)
 
     async function handleSaveTask() {
       const newTask = await putTask(editedTask)
-      console.log(editedTask)
       tasksDispatch({
         type: "update_task",
         task: newTask
