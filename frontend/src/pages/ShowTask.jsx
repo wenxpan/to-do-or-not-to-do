@@ -1,16 +1,23 @@
-import React, { useContext, useState } from "react"
+import React, { useContext, useEffect, useReducer, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import TaskContext from "../contexts/TaskContext"
 import { putTask } from "../services/tasksService"
 import ProgressLine from "../components/ProgressLine"
+import editedTaskReducer from "../reducers/editedTaskReducer"
 
 const ShowTask = ({ task }) => {
   if (task) {
     const location = useLocation()
-    const [editedTask, setEditedTask] = useState(task)
     const [editing, setEditing] = useState(
       location.state ? location.state.editing : false
     )
+    const [editedTask, editedTaskDispatch] = useReducer(editedTaskReducer, {})
+
+    useEffect(
+      () => editedTaskDispatch({ type: "set_task", editedTask: task }),
+      []
+    )
+
     const { tasksDispatch } = useContext(TaskContext)
 
     async function handleUpdateTask() {
@@ -25,7 +32,8 @@ const ShowTask = ({ task }) => {
 
     function handleChange(changedPart) {
       // when onChange happens in each field
-      setEditedTask((prev) => ({ ...prev, ...changedPart }))
+      editedTaskDispatch({ type: "update_area", area: changedPart })
+      // setEditedTask((prev) => ({ ...prev, ...changedPart }))
     }
 
     //TODO: make editable fields dry
@@ -146,7 +154,9 @@ const ShowTask = ({ task }) => {
         <h3>Notes</h3>
         {additionalContent}
         <h3>Progress:</h3>
-        <ProgressLine props={{ editing, task, editedTask, setEditedTask }} />
+        <ProgressLine
+          props={{ editing, task, editedTask, editedTaskDispatch }}
+        />
         <button onClick={() => setEditing((prev) => !prev)}>
           {editing ? "Cancel" : "Edit"}
         </button>

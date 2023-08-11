@@ -1,22 +1,45 @@
 export default function editedTaskReducer(editedTask, action) {
   switch (action.type) {
-    case "set_progress": {
-      return action.tasks
+    case "set_task": {
+      return action.editedTask
     }
-    case "add_progress": {
-      return [...tasks, action.task]
+
+    case "update_area": {
+      // expected to receive: action.area: {title: e.target.value}
+      return { ...editedTask, ...action.area }
     }
-    case "update_progress": {
-      return tasks.map((t) => {
-        if (t._id === action.task._id) {
-          return action.task
-        } else {
-          return t
+
+    case "update_prog": {
+      switch (action.protype) {
+        case "edit_line": {
+          // receive {type: 'update_prog', protype: 'edit_line', obj: oldProgLine, value: e.target.value }
+          return {
+            ...editedTask,
+            progress: editedTask.progress.map((prog) =>
+              prog === action.obj
+                ? { ...prog, description: action.value }
+                : prog
+            )
+          }
         }
-      })
+        case "delete_line": {
+          // receive {type: 'update_prog', protype: 'edit_line', obj: oldProgLine }
+          return {
+            ...editedTask,
+            progress: editedTask.progress.filter((prog) => prog !== action.obj)
+          }
+        }
+        case "add_line": {
+          return {
+            ...editedTask,
+            progress: [...editedTask.progress, { description: "" }]
+          }
+        }
+      }
     }
-    case "delete_progress": {
-      return tasks.filter((t) => t._id !== action.task._id)
+
+    case "clear_task": {
+      return { title: "" }
     }
   }
   throw Error("Unknown action: " + action.type)

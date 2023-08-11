@@ -1,7 +1,16 @@
 import React from "react"
 
 const ProgressLine = ({ props }) => {
-  const { editing, task, editedTask, setEditedTask } = props
+  const { editing, task, editedTask, editedTaskDispatch } = props
+
+  function handleChange(desc, updatedParts) {
+    editedTaskDispatch({
+      type: "update_prog",
+      protype: desc,
+      ...updatedParts
+    })
+  }
+
   if (!editing) {
     // viewing mode
     return (
@@ -25,38 +34,24 @@ const ProgressLine = ({ props }) => {
           <div key={index}>
             <input
               value={p.description}
-              onChange={(e) =>
-                setEditedTask((prev) => ({
-                  ...prev,
-                  progress: [
-                    ...prev.progress.map((pro) =>
-                      pro === p ? { ...p, description: e.target.value } : pro
-                    )
-                  ]
-                }))
-              }
+              onChange={(e) => {
+                handleChange("edit_line", { obj: p, value: e.target.value })
+              }}
             ></input>
             <button
-              onClick={() =>
-                setEditedTask((prev) => ({
-                  ...prev,
-                  progress: prev.progress.filter((pro) => pro !== p)
-                }))
-              }
+              onClick={() => {
+                handleChange("delete_line", { obj: p })
+              }}
             >
               delete
             </button>
             <br />
           </div>
         ))}
-        {/* <input placeholder="new progress"></input> */}
         <button
-          onClick={() =>
-            setEditedTask((prev) => ({
-              ...prev,
-              progress: [...prev.progress, { description: "" }]
-            }))
-          }
+          onClick={() => {
+            handleChange("add_line")
+          }}
         >
           Add new
         </button>
@@ -64,10 +59,6 @@ const ProgressLine = ({ props }) => {
       </>
     )
   }
-
-  // return <div>{progressContent}</div>
 }
 
 export default ProgressLine
-
-// variables needed: editing, task.progress, edited task, setEditedTask,
