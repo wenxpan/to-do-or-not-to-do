@@ -5,8 +5,30 @@ export default function editedTaskReducer(editedTask, action) {
     }
 
     case "update_area": {
-      // expected to receive: action.area: {title: e.target.value}
-      return { ...editedTask, ...action.area }
+      // expected to receive: {type: 'update_area', area: 'doReason', value: e.target.value}}
+      switch (action.area) {
+        case "title": {
+          return { ...editedTask, title: action.value }
+        }
+        case "isCompleted": {
+          return { ...editedTask, isCompleted: action.value }
+        }
+        case "isArchived": {
+          return { ...editedTask, isArchived: action.value }
+        }
+        case "tags": {
+          return { ...editedTask, tags: action.value }
+        }
+        case "doReason": {
+          return { ...editedTask, doReason: action.value }
+        }
+        case "delayReason": {
+          return { ...editedTask, delayReason: action.value }
+        }
+        case "additionalInfo": {
+          return { ...editedTask, additionalInfo: action.value }
+        }
+      }
     }
 
     case "update_prog": {

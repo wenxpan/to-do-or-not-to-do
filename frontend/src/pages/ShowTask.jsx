@@ -4,6 +4,8 @@ import TaskContext from "../contexts/TaskContext"
 import { putTask } from "../services/tasksService"
 import ProgressLine from "../components/ProgressLine"
 import editedTaskReducer from "../reducers/editedTaskReducer"
+import TaskField from "../components/TaskField"
+import TaskFieldRadio from "../components/TaskFieldRadio"
 
 const ShowTask = ({ task }) => {
   if (task) {
@@ -11,13 +13,7 @@ const ShowTask = ({ task }) => {
     const [editing, setEditing] = useState(
       location.state ? location.state.editing : false
     )
-    const [editedTask, editedTaskDispatch] = useReducer(editedTaskReducer, {})
-
-    useEffect(
-      () => editedTaskDispatch({ type: "set_task", editedTask: task }),
-      []
-    )
-
+    const [editedTask, editedTaskDispatch] = useReducer(editedTaskReducer, task)
     const { tasksDispatch } = useContext(TaskContext)
 
     async function handleUpdateTask() {
@@ -30,111 +26,68 @@ const ShowTask = ({ task }) => {
       setEditing((prev) => !prev)
     }
 
-    function handleChange(changedPart) {
+    function getProps(area) {
+      const fieldDesc = {
+        doReason: "What can you achieve by doing it?",
+        delayReason: "What keeps you from doing it?",
+        additionalInfo: "Notes",
+        isCompleted: "Completed",
+        isArchived: "Archived"
+      }
+      const fields = [
+        "isCompleted",
+        "isArchived",
+        "additionalInfo",
+        "doReason",
+        "delayReason"
+      ]
+
+      const contentProps = fields.map((f) => {
+        return {
+          area: f,
+          handleChange,
+          editing,
+          editedValue: editedTask[f],
+          initialValue: task[f],
+          heading: fieldDesc[f]
+        }
+      })
+
+      return contentProps.find((c) => c.area === area)
+    }
+
+    function handleChange(area, value) {
       // when onChange happens in each field
-      editedTaskDispatch({ type: "update_area", area: changedPart })
-      // setEditedTask((prev) => ({ ...prev, ...changedPart }))
+      editedTaskDispatch({ type: "update_area", area, value })
     }
 
     //TODO: make editable fields dry
     const titleContent = editing ? (
-      <h2>
+      <>
+        <h2>Title:</h2>
         <textarea
           value={editedTask.title}
-          onChange={
-            (e) => handleChange({ title: e.target.value })
-            // setEditedTask((prev) => ({ ...prev, title: e.target.value }))
-          }
+          onChange={(e) => handleChange("title", e.target.value)}
         ></textarea>
-      </h2>
+        <br />
+      </>
     ) : (
       <h2>{task.title}</h2>
     )
 
     const tagContent = editing ? (
       <>
+        <h3>Tags:</h3>
         <textarea
           value={editedTask.tags.join(", ")}
-          onChange={(e) => handleChange({ tags: e.target.value.split(", ") })}
+          onChange={(e) => handleChange("tags", e.target.value.split(", "))}
         ></textarea>
+        <br />
       </>
     ) : (
-      <p>tags: {task.tags.join(", ")}</p>
-    )
-
-    const completedContent = editing ? (
       <>
-        <p>Completed:</p>
-        <label htmlFor="completed">Yes</label>
-        <input
-          checked={editedTask.isCompleted}
-          type="radio"
-          name="isCompleted"
-          id="completed"
-          onChange={(e) => handleChange({ isCompleted: true })}
-        />
-        <label htmlFor="not_completed">No</label>
-        <input
-          checked={!editedTask.isCompleted}
-          type="radio"
-          name="isCompleted"
-          id="not_completed"
-          onChange={(e) => handleChange({ isCompleted: false })}
-        />
+        <p>tags: {task.tags.join(", ")}</p>
       </>
-    ) : (
-      <p>Completed: {task.isCompleted ? "Yes" : "No"}</p>
-    )
-
-    const archivedContent = editing ? (
-      <>
-        <p>Archived:</p>
-        <label htmlFor="archived">Yes</label>
-        <input
-          checked={editedTask.isArchived}
-          type="radio"
-          name="isArchived"
-          id="archived"
-          onChange={(e) => handleChange({ isArchived: true })}
-        />
-        <label htmlFor="not_archived">No</label>
-        <input
-          checked={!editedTask.isArchived}
-          type="radio"
-          name="isArchived"
-          id="not_archived"
-          onChange={(e) => handleChange({ isArchived: false })}
-        />
-      </>
-    ) : (
-      <p>Archived: {task.isArchived ? "Yes" : "No"}</p>
-    )
-
-    const doContent = editing ? (
-      <textarea
-        value={editedTask.doReason}
-        onChange={(e) => handleChange({ doReason: e.target.value })}
-      ></textarea>
-    ) : (
-      <p>{task.doReason}</p>
-    )
-
-    const delayContent = editing ? (
-      <textarea
-        value={editedTask.delayReason}
-        onChange={(e) => handleChange({ delayReason: e.target.value })}
-      ></textarea>
-    ) : (
-      <p>{task.delayReason}</p>
-    )
-
-    const additionalContent = editing ? (
-      <textarea
-        value={editedTask.additionalInfo}
-        onChange={(e) => handleChange({ additionalInfo: e.target.value })}
-      ></textarea>
-    ) : (
-      <p>{task.additionalInfo}</p>
     )
 
     return (
@@ -145,14 +98,11 @@ const ShowTask = ({ task }) => {
         {titleContent}
         {tagContent}
         <p>date added: {task.dateAdded.slice(0, 10)}</p>
-        {completedContent}
-        {archivedContent}
-        <h3>What can you achieve by doing it?</h3>
-        {doContent}
-        <h3>What keeps you from doing it?</h3>
-        {delayContent}
-        <h3>Notes</h3>
-        {additionalContent}
+        <TaskFieldRadio props={getProps("isCompleted")} />
+        <TaskFieldRadio props={getProps("isArchived")} />
+        <TaskField props={getProps("doReason")} />
+        <TaskField props={getProps("delayReason")} />
+        <TaskField props={getProps("additionalInfo")} />
         <h3>Progress:</h3>
         <ProgressLine
           props={{ editing, task, editedTask, editedTaskDispatch }}
