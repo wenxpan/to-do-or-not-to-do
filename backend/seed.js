@@ -7,12 +7,20 @@ const users = [
   {
     username: "Demo",
     password: await bcrypt.hash("Demouser", salt),
-    email: "demo@gmail.com"
+    email: "demo@gmail.com",
+    isAdmin: false
   },
   {
     username: "John",
     password: await bcrypt.hash("testing", salt),
-    email: "john@gmail.com"
+    email: "john@gmail.com",
+    isAdmin: false
+  },
+  {
+    username: "Admin",
+    password: await bcrypt.hash("testing", salt),
+    email: "admin@gmail.com",
+    isAdmin: true
   }
 ]
 
