@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import moment from "moment"
 import TaskContext from "../contexts/TaskContext"
 import TaskLine from "../components/TaskLine"
+import ProgressLine from "../components/ProgressLine"
 
 const Home = () => {
   const { tasks } = useContext(TaskContext)

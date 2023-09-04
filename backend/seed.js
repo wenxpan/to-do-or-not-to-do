@@ -1,4 +1,25 @@
-import { taskModel, dbClose } from "./db.js"
+import { UserModel, TaskModel, dbClose } from "./db.js"
+import bcrypt from "bcryptjs"
+
+const salt = await bcrypt.genSalt(10)
+
+const users = [
+  {
+    username: "Demo",
+    password: await bcrypt.hash("Demouser", salt),
+    email: "demo@gmail.com"
+  },
+  {
+    username: "John",
+    password: await bcrypt.hash("testing", salt),
+    email: "john@gmail.com"
+  }
+]
+
+await UserModel.deleteMany()
+console.log("deleted users")
+const insertedUsers = await UserModel.insertMany(users)
+console.log("inserted users")
 
 const tasks = [
   {
@@ -19,7 +40,8 @@ const tasks = [
         date: "2023-08-09",
         description: "Read a few more pages"
       }
-    ]
+    ],
+    user: insertedUsers[0]
   },
   {
     title: "Start reading Dune",
@@ -30,7 +52,8 @@ const tasks = [
     doReason: "I've heard great things about the book",
     additionalInfo: "Link to book: amazon.com/dune",
     tags: ["book", "scifi", "fiction"],
-    progress: []
+    progress: [],
+    user: insertedUsers[0]
   },
   {
     title: "Complete JavaScript Course",
@@ -50,7 +73,8 @@ const tasks = [
         date: "2023-08-09",
         description: "Started working on advanced topics"
       }
-    ]
+    ],
+    user: insertedUsers[0]
   },
   {
     title: "Learn French",
@@ -74,7 +98,8 @@ const tasks = [
         date: "2023-08-10",
         description: "Finished intermediate level"
       }
-    ]
+    ],
+    user: insertedUsers[0]
   },
   {
     title: "Old Blog Cleanup",
@@ -94,13 +119,14 @@ const tasks = [
         date: "2023-07-05",
         description: "Updated formatting and images of popular posts"
       }
-    ]
+    ],
+    user: insertedUsers[0]
   }
 ]
 
-await taskModel.deleteMany()
+await TaskModel.deleteMany()
 console.log("deleted tasks")
-await taskModel.insertMany(tasks)
+await TaskModel.insertMany(tasks)
 console.log("inserted tasks")
 
 await dbClose()
