@@ -6,19 +6,19 @@ export const getHelper = async (endpoint) => {
   return data
 }
 
-export const postHelper = async (endpoint, collection) => {
+export const postHelper = async (endpoint, body) => {
   const res = await fetch(`${baseURL}${endpoint}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(collection),
+    body: JSON.stringify(body),
     credentials: "include"
   })
   const data = await res.json()
   return data
 }
 
-export const deleteHelper = async (endpoint, id) => {
-  const res = await fetch(`${baseURL}${endpoint}${id}`, {
+export const deleteHelper = async (endpoint) => {
+  const res = await fetch(`${baseURL}${endpoint}`, {
     method: "DELETE",
     credentials: "include"
   })
@@ -26,11 +26,11 @@ export const deleteHelper = async (endpoint, id) => {
   return res
 }
 
-export const putHelper = async (endpoint, collection) => {
-  const res = await fetch(`${baseURL}${endpoint}${collection._id}`, {
+export const putHelper = async (endpoint, body) => {
+  const res = await fetch(`${baseURL}${endpoint}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(collection),
+    body: JSON.stringify(body),
     credentials: "include"
   })
   const data = await res.json() //return updated item

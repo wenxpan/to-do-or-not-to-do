@@ -28,10 +28,13 @@ router.post("/login", async (req, res) => {
         res.cookie("token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          sameSite: "lax", // or 'strict'
+          sameSite: "lax", // 'strict', 'lax'
           maxAge: 7200000 // 2 hour
         })
-        res.status(200).send({ success: true, user })
+        const returnedUser = await UserModel.findById(user._id).select(
+          "-password"
+        )
+        res.status(200).send({ success: true, user: returnedUser })
       } else {
         res.status(400).send({ error: "Invalid credentials" })
       }

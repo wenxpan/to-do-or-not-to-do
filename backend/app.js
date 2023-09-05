@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 const corsOptions = {
-  origin: "http://localhost:5173", // app's origin
+  origin: "http://127.0.0.1:5173", // app's origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // required to pass
   optionsSuccessStatus: 204

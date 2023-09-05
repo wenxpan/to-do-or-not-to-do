@@ -13,28 +13,40 @@ import NewTask from "./pages/NewTask"
 import Login from "./pages/Login"
 import { getHelper } from "./services/apiHelper"
 import UserContext from "./contexts/UserContext"
+import Signup from "./pages/Signup"
 
 function App() {
   const [tasks, tasksDispatch] = useReducer(taskReducer, [])
 
   const [user, setUser] = useState()
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const data = await getHelper("/check-auth")
         if (data.success) {
-          setUser(data.user)
-          getTasks().then((tasks) =>
-            tasksDispatch({ type: "set_tasks", tasks })
-          )
+          setUser({ ...data.user, isLoggedIn: true })
+        } else {
+          setUser({ isLoggedIn: false })
         }
+        setLoaded(true)
       } catch (e) {
         console.error(e)
       }
     }
     checkAuth()
   }, [])
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (loaded && user.isLoggedIn) {
+        const returnedTasks = await getTasks(user._id)
+        tasksDispatch({ type: "set_tasks", returnedTasks })
+      }
+    }
+    loadData()
+  }, [user])
 
   function ShowTaskWrapper() {
     const { id } = useParams()
@@ -43,12 +55,13 @@ function App() {
 
   return (
     <>
-      <UserContext.Provider value={{ user, setUser }}>
+      <UserContext.Provider value={{ user, setUser, loaded }}>
         <TaskContext.Provider value={{ tasks, tasksDispatch }}>
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/tasks">
               <Route index element={<AllTasks />} />
               <Route path="new" element={<NewTask />} />
