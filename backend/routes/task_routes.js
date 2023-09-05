@@ -1,13 +1,20 @@
 import { TaskModel } from "../db.js"
 import { Router } from "express"
+import {
+  tokenRequired,
+  adminRequired,
+  adminOrOwnerRequired
+} from "../utils/checkAuth.js"
 
 const router = Router()
 
 // get all tasks
-router.get("/", async (req, res) => res.send(await TaskModel.find()))
+router.get("/", tokenRequired, adminRequired, async (req, res) =>
+  res.send(await TaskModel.find())
+)
 
 // create new task
-router.post("/", async (req, res) => {
+router.post("/", tokenRequired, async (req, res) => {
   try {
     const insertedTask = await TaskModel.create(req.body)
     res.status(201).send(insertedTask)
@@ -17,7 +24,7 @@ router.post("/", async (req, res) => {
 })
 
 // get one task
-router.get("/:id", async (req, res) => {
+router.get("/:id", tokenRequired, adminOrOwnerRequired, async (req, res) => {
   try {
     const task = await TaskModel.findById(req.params.id)
     if (task) {
@@ -31,7 +38,7 @@ router.get("/:id", async (req, res) => {
 })
 
 // update task
-router.put("/:id", async (req, res) => {
+router.put("/:id", tokenRequired, adminOrOwnerRequired, async (req, res) => {
   try {
     const task = await TaskModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true
@@ -47,7 +54,7 @@ router.put("/:id", async (req, res) => {
 })
 
 // delete task
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", tokenRequired, adminOrOwnerRequired, async (req, res) => {
   try {
     const task = await TaskModel.findByIdAndDelete(req.params.id)
     if (task) {

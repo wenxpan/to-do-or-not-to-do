@@ -1,14 +1,21 @@
-import { UserModel } from "../db.js"
+import { TaskModel, UserModel } from "../db.js"
 import { Router } from "express"
 import bcrypt from "bcryptjs"
+import {
+  tokenRequired,
+  adminRequired,
+  adminOrOwnerRequired
+} from "../utils/checkAuth.js"
 
 const router = Router()
 
 // admin get all users
-router.get("/", async (req, res) => res.send(await UserModel.find()))
+router.get("/", tokenRequired, adminRequired, async (req, res) =>
+  res.send(await UserModel.find())
+)
 
 // get one user
-router.get("/:id", async (req, res) => {
+router.get("/:id", tokenRequired, adminOrOwnerRequired, async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id)
     if (user) {
@@ -22,7 +29,7 @@ router.get("/:id", async (req, res) => {
 })
 
 // update user
-router.put("/:id", async (req, res) => {
+router.put("/:id", tokenRequired, adminOrOwnerRequired, async (req, res) => {
   try {
     const { email, username } = req.body
     const salt = await bcrypt.genSalt(10)
@@ -46,7 +53,7 @@ router.put("/:id", async (req, res) => {
 })
 
 // delete user
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", tokenRequired, adminRequired, async (req, res) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.params.id)
     if (user) {
@@ -58,5 +65,15 @@ router.delete("/:id", async (req, res) => {
     res.status(500).send({ error: err.message })
   }
 })
+
+router.get(
+  "/:id/tasks",
+  tokenRequired,
+  adminOrOwnerRequired,
+  async (req, res) => {
+    const userTasks = await TaskModel.find({ user: req.params.id })
+    res.send(userTasks)
+  }
+)
 
 export default router
