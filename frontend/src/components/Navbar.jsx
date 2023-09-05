@@ -1,6 +1,7 @@
 import React, { useContext } from "react"
 import { NavLink } from "react-router-dom"
 import UserContext from "../contexts/UserContext"
+import LogOutButton from "./LogOutButton"
 
 const Navbar = () => {
   const { loaded, user } = useContext(UserContext)
@@ -32,6 +33,7 @@ const Navbar = () => {
           {opt.text}
         </NavLink>
       ))}
+      {user.isLoggedIn && <LogOutButton />}
     </nav>
   )
 }

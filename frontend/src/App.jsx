@@ -14,6 +14,9 @@ import Login from "./pages/Login"
 import { getHelper } from "./services/apiHelper"
 import UserContext from "./contexts/UserContext"
 import Signup from "./pages/Signup"
+import Landing from "./pages/Landing"
+import LoggedInRoute from "./pages/LoggedInRoute"
+import IntroRoute from "./pages/IntroRoute"
 
 function App() {
   const [tasks, tasksDispatch] = useReducer(taskReducer, [])
@@ -59,13 +62,18 @@ function App() {
         <TaskContext.Provider value={{ tasks, tasksDispatch }}>
           <Navbar />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/tasks">
-              <Route index element={<AllTasks />} />
-              <Route path="new" element={<NewTask />} />
-              <Route path=":id" element={<ShowTaskWrapper />} />
+            <Route path="" element={<IntroRoute />}>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+            </Route>
+            <Route path="" element={<LoggedInRoute />}>
+              <Route path="/dashboard" element={<Home />} />
+              <Route path="/tasks">
+                <Route index element={<AllTasks />} />
+                <Route path="new" element={<NewTask />} />
+                <Route path=":id" element={<ShowTaskWrapper />} />
+              </Route>
             </Route>
             <Route path="archive" element={<Archive />} />
           </Routes>

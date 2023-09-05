@@ -94,4 +94,9 @@ router.get("/check-auth", async (req, res) => {
   }
 })
 
+router.post("/logout", (req, res) => {
+  res.clearCookie("token")
+  res.send({ message: "Logged out" })
+})
+
 export default router
