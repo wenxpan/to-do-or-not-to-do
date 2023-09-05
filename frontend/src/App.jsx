@@ -11,13 +11,30 @@ import Navbar from "./components/Navbar"
 import Archive from "./pages/Archive"
 import NewTask from "./pages/NewTask"
 import Login from "./pages/Login"
+import { getHelper } from "./services/apiHelper"
+import UserContext from "./contexts/UserContext"
 
 function App() {
   const [tasks, tasksDispatch] = useReducer(taskReducer, [])
 
-  // useEffect(() => {
-  //   getTasks().then((tasks) => tasksDispatch({ type: "set_tasks", tasks }))
-  // }, [])
+  const [user, setUser] = useState()
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const data = await getHelper("/check-auth")
+        if (data.success) {
+          setUser(data.user)
+          getTasks().then((tasks) =>
+            tasksDispatch({ type: "set_tasks", tasks })
+          )
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    checkAuth()
+  }, [])
 
   function ShowTaskWrapper() {
     const { id } = useParams()
@@ -26,19 +43,21 @@ function App() {
 
   return (
     <>
-      <TaskContext.Provider value={{ tasks, tasksDispatch }}>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/tasks">
-            <Route index element={<AllTasks />} />
-            <Route path="new" element={<NewTask />} />
-            <Route path=":id" element={<ShowTaskWrapper />} />
-          </Route>
-          <Route path="archive" element={<Archive />} />
-        </Routes>
-      </TaskContext.Provider>
+      <UserContext.Provider value={{ user, setUser }}>
+        <TaskContext.Provider value={{ tasks, tasksDispatch }}>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/tasks">
+              <Route index element={<AllTasks />} />
+              <Route path="new" element={<NewTask />} />
+              <Route path=":id" element={<ShowTaskWrapper />} />
+            </Route>
+            <Route path="archive" element={<Archive />} />
+          </Routes>
+        </TaskContext.Provider>
+      </UserContext.Provider>
     </>
   )
 }

@@ -34,11 +34,10 @@ const adminRequired = async (req, res, next) => {
 
 const adminOrOwnerRequired = async (req, res, next) => {
   const task = await TaskModel.findById(req.params.id)
-
   if (
     req.user.isAdmin ||
     req.user.equals(req.params.id) ||
-    req.user.equals(task.user)
+    req.user.equals(task?.user)
   ) {
     next()
   } else {
