@@ -25,7 +25,13 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRE
         })
-        res.status(200).send({ token, user })
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax", // or 'strict'
+          maxAge: 7200000 // 2 hour
+        })
+        res.status(200).send({ success: true, user })
       } else {
         res.status(400).send({ error: "Invalid credentials" })
       }
@@ -54,9 +60,34 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE
     })
-    res.status(201).send({ token, user: newUser })
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax", // or 'strict'
+      maxAge: 7200000 // 2 hour
+    })
+    res.status(201).send({ success: true, user: newUser })
   } catch (err) {
     res.status(500).send({ error: err.message })
+  }
+})
+
+router.get("/check-auth", async (req, res) => {
+  const token = req.cookies.token
+  if (!token) {
+    return res.send({ success: false, message: "Not authenticated" })
+  }
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+    const user = await UserModel.findById(decodedToken.id)
+    if (user) {
+      return res.send({ success: true, user })
+    } else {
+      return res.status(403).send({ error: "Invalid user" })
+    }
+  } catch (err) {
+    return res.status(403).json({ error: err.message })
   }
 })
 

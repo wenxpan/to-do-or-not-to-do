@@ -2,8 +2,9 @@ import jwt from "jsonwebtoken"
 import { TaskModel, UserModel } from "../db.js"
 
 const tokenRequired = async (req, res, next) => {
-  const authHeader = req.headers["authorization"]
-  const token = authHeader?.split(" ")[1]
+  // const authHeader = req.headers["authorization"]
+  // const token = authHeader?.split(" ")[1]
+  const token = req.cookies.token
 
   if (!token) {
     return res.status(401).send({ error: "Authorization token missing" })
