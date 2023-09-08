@@ -10,7 +10,7 @@ const IntroRoute = () => {
   }
 
   if (user.isLoggedIn) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/account" replace />
   }
 
   return <Outlet />

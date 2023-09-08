@@ -5,7 +5,6 @@ import LogOutButton from "./LogOutButton"
 
 const Navbar = () => {
   const { loaded, user } = useContext(UserContext)
-  const style = { display: "flex", justifyContent: "space-evenly" }
 
   if (!loaded) {
     return null
@@ -13,28 +12,41 @@ const Navbar = () => {
 
   const views = {
     loggedIn: [
-      { link: "/", text: "Home" },
-      { link: "/tasks", text: "View all tasks" },
-      { link: "/tasks/new", text: "Add task" },
-      { link: "/archive", text: "Archive" }
+      ["/account", "Home"],
+      ["/tasks", "View all tasks"],
+      ["/tasks/new", "Add task"],
+      ["/archive", "Archive"]
+      // { link: "/account", text: "Home" },
+      // { link: "/tasks", text: "View all tasks" },
+      // { link: "/tasks/new", text: "Add task" },
+      // { link: "/archive", text: "Archive" }
     ],
     default: [
-      { link: "/login", text: "Log in" },
-      { link: "/signup", text: "Sign up" }
+      ["/login", "Log In"],
+      ["/signup", "Sign Up"]
+      // { link: "/login", text: "Log in" },
+      // { link: "/signup", text: "Sign up" }
     ]
   }
 
   const currentView = user.isLoggedIn ? views.loggedIn : views.default
 
   return (
-    <nav style={style}>
-      {currentView.map((opt) => (
-        <NavLink key={opt.text} to={opt.link}>
-          {opt.text}
-        </NavLink>
-      ))}
-      {user.isLoggedIn && <LogOutButton />}
-    </nav>
+    <div>
+      <nav className="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row">
+       <a></a>
+       {currentView.map(([url, title]) => (
+          <NavLink
+            key={title}
+            to={url}
+            className="px-4 py-2 mt-2 text-sm font-semibold bg-transparent rounded-lg md:mt-0 md:ml-4 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline"
+          >
+            {title}
+          </NavLink>
+        ))}
+        {user.isLoggedIn && <LogOutButton />}
+      </nav>
+    </div>
   )
 }
 

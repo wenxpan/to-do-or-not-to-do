@@ -45,7 +45,7 @@ function App() {
     const loadData = async () => {
       if (loaded && user.isLoggedIn) {
         const returnedTasks = await getTasks(user._id)
-        tasksDispatch({ type: "set_tasks", returnedTasks })
+        tasksDispatch({ type: "set_tasks", tasks: returnedTasks })
       }
     }
     loadData()
@@ -68,7 +68,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
             </Route>
             <Route path="" element={<LoggedInRoute />}>
-              <Route path="/dashboard" element={<Home />} />
+              <Route path="/account" element={<Home />} />
               <Route path="/tasks">
                 <Route index element={<AllTasks />} />
                 <Route path="new" element={<NewTask />} />
