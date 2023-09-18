@@ -16,15 +16,21 @@ const AddTaskLine = () => {
   }
 
   return (
-    <div>
+    <div className="my-2 flex items-center space-x-4">
       <input
         value={newTask.title}
         onChange={(e) =>
           setNewTask((prev) => ({ ...prev, title: e.target.value }))
         }
         placeholder="add task"
+        className="grow"
       ></input>
-      <button onClick={() => handleAddTask(newTask)}>Add task</button>
+      <button
+        onClick={() => handleAddTask(newTask)}
+        className="bg-cyan-300/50 p-2 hover:bg-cyan-300/75"
+      >
+        Add task
+      </button>
     </div>
   )
 }

@@ -20,7 +20,7 @@ const AllTasks = () => {
           {todoTasks.map((t) => (
             <TaskLine key={t._id} task={t} />
           ))}
-          <h2>Completed</h2>
+          <h2 className="text-lg">Completed</h2>
           {completedTasks.map((t) => (
             <TaskLine key={t._id} task={t} />
           ))}
