@@ -72,7 +72,7 @@ const ShowTask = ({ task }) => {
         <br />
       </>
     ) : (
-      <h2>{task.title}</h2>
+      <h2 className="font-bold text-xl">{task.title}</h2>
     )
 
     const tagContent = editing ? (
@@ -86,20 +86,27 @@ const ShowTask = ({ task }) => {
       </>
     ) : (
       <>
-        <p>tags: {task.tags.join(", ")}</p>
+        <p className="italic">Tags: {task.tags.join(", ")}</p>
       </>
+    )
+    const backButton = (
+      <Link to="/tasks">
+        <button className="bg-cyan-300/50 p-2 hover:bg-cyan-300/75">
+          Back to list
+        </button>
+      </Link>
     )
 
     return (
-      <div>
-        <Link to="/tasks">
-          <button>Back to list</button>
-        </Link>
+      <div className="container mx-auto flex-col space-y-2">
+        {backButton}
         {titleContent}
         {tagContent}
-        <p>date added: {task.dateAdded.slice(0, 10)}</p>
-        <TaskFieldRadio props={getProps("isCompleted")} />
-        <TaskFieldRadio props={getProps("isArchived")} />
+        <div className="mb-5">
+          <p>Date added: {task.dateAdded.slice(0, 10)}</p>
+          <TaskFieldRadio props={getProps("isCompleted")} />
+          <TaskFieldRadio props={getProps("isArchived")} />
+        </div>
         <TaskField props={getProps("doReason")} />
         <TaskField props={getProps("delayReason")} />
         <TaskField props={getProps("additionalInfo")} />

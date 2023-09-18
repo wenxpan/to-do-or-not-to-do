@@ -5,7 +5,7 @@ const TaskField = ({ props }) => {
     props
   return (
     <>
-      <h3>{heading}</h3>
+      <h3 className="font-semibold">{heading}</h3>
       {!editing ? (
         <>
           <p>{initialValue}</p>
