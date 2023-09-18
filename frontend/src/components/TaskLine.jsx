@@ -2,8 +2,10 @@ import React, { useContext, useState } from "react"
 import TaskContext from "../contexts/TaskContext"
 import { deleteTask, putTask } from "../services/tasksService"
 import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const TaskLine = ({ task }) => {
+  const nav = useNavigate()
   const { tasksDispatch } = useContext(TaskContext)
   const [isEditing, setIsEditing] = useState(false)
   const [editedTask, setEditedTask] = useState(task)
@@ -55,23 +57,24 @@ const TaskLine = ({ task }) => {
     </button>
   )
 
-  const saveButton = isEditing && <button onClick={handleSaveTask}>save</button>
-
-  const viewDetailButton = (
-    <Link to={`/tasks/${task._id}`}>
-      <button>view</button>
-    </Link>
-  )
+  const saveButton = isEditing && <button onClick={handleSaveTask}>Save</button>
 
   const checkBox = (
     <input
       type="checkbox"
-      className="h-6 w-6 "
+      className="h-6 w-6 cursor-pointer hover:bg-blue-500/75"
       value="completed"
       checked={task.isCompleted ? "checked" : ""}
       onChange={() => handleCompleteTask(task)}
     />
   )
+
+  const viewDetailButton = (
+    <Link to={`/tasks/${task._id}`}>
+      <button>View</button>
+    </Link>
+  )
+
   const titleEl = (
     <input
       value={editedTask.title}
@@ -79,27 +82,29 @@ const TaskLine = ({ task }) => {
         setEditedTask((prev) => ({ ...prev, title: e.target.value }))
       }
       disabled={isEditing ? "" : "disabled"}
-      className={`disabled:border-0 ${task.isCompleted ? "line-through" : ""}`}
+      className={`disabled:border-0 overflow-x-auto w-full px-2 bg-inherit ${
+        task.isCompleted ? "line-through" : ""
+      }`}
     ></input>
   )
 
   const deleteButton = (
-    <button onClick={() => handleDeleteTask(task)}>delete</button>
+    <button onClick={() => handleDeleteTask(task)} className="text-red-500">
+      Delete
+    </button>
   )
 
   const archiveButton = (
-    <button onClick={() => handleArchiveTask(task)}>toggle archive</button>
+    <button onClick={() => handleArchiveTask(task)}>Toggle Archive</button>
   )
   return (
     <>
-      <section className="border-2 my-2">
-        {/* <div className="flex place-items-center"> */}
+      <section className="my-2 flex items-center space-x-4 md:space-y-0 bg-cyan-300/25 hover:bg-cyan-300/50">
         {checkBox}
-        {titleEl}
-        {/* </div> */}
-        {saveButton}
-        {editButton}
+        <div className="flex-grow overflow-x-auto ">{titleEl}</div>
         <div className="flex-row space-x-3">
+          {saveButton}
+          {editButton}
           {viewDetailButton}
           {deleteButton}
           {archiveButton}
