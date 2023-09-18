@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react"
 import UserContext from "../contexts/UserContext"
-import { postHelper } from "../services/apiHelper"
+import { apiPost } from "../services/apiHelper"
 import ToastWarning from "../components/ToastWarning"
 import { toast } from "react-toastify"
 
@@ -13,7 +13,7 @@ const Login = () => {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      const data = await postHelper("/login", { email, password })
+      const data = await apiPost("/login", { email, password })
       if (data.success) {
         setUser({ ...data.user, isLoggedIn: true })
       } else {

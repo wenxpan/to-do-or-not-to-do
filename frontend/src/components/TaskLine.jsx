@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 
 const TaskLine = ({ task }) => {
   const { tasksDispatch } = useContext(TaskContext)
-  const [editing, setEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [editedTask, setEditedTask] = useState(task)
 
   async function handleDeleteTask(task) {
@@ -41,50 +41,70 @@ const TaskLine = ({ task }) => {
       type: "update_task",
       task: editedTask
     })
-    setEditing((prev) => !prev)
+    setIsEditing((prev) => !prev)
   }
 
-  const editableContent = editing ? (
-    <>
-      <input
-        value={editedTask.title}
-        onChange={(e) =>
-          setEditedTask((prev) => ({ ...prev, title: e.target.value }))
-        }
-      ></input>
-      <br />
-      <button onClick={handleSaveTask}>save</button>
-      <button
-        onClick={() => {
-          setEditing((prev) => !prev)
-          setEditedTask(task)
-        }}
-      >
-        cancel
-      </button>
-    </>
-  ) : (
-    <>
-      <p>{task.title}</p>
-      <button onClick={() => setEditing((prev) => !prev)}>edit</button>
-    </>
+  const editButton = (
+    <button
+      onClick={() => {
+        setIsEditing((prev) => !prev)
+        setEditedTask(task)
+      }}
+    >
+      {isEditing ? "Cancel" : "Edit"}
+    </button>
   )
 
+  const saveButton = isEditing && <button onClick={handleSaveTask}>save</button>
+
+  const viewDetailButton = (
+    <Link to={`/tasks/${task._id}`}>
+      <button>view</button>
+    </Link>
+  )
+
+  const checkBox = (
+    <input
+      type="checkbox"
+      className="h-6 w-6 "
+      value="completed"
+      checked={task.isCompleted ? "checked" : ""}
+      onChange={() => handleCompleteTask(task)}
+    />
+  )
+  const titleEl = (
+    <input
+      value={editedTask.title}
+      onChange={(e) =>
+        setEditedTask((prev) => ({ ...prev, title: e.target.value }))
+      }
+      disabled={isEditing ? "" : "disabled"}
+      className={`disabled:border-0 ${task.isCompleted ? "line-through" : ""}`}
+    ></input>
+  )
+
+  const deleteButton = (
+    <button onClick={() => handleDeleteTask(task)}>delete</button>
+  )
+
+  const archiveButton = (
+    <button onClick={() => handleArchiveTask(task)}>toggle archive</button>
+  )
   return (
     <>
-      <div>
-        {editableContent}
-        {/* <p>Completed: {task.isCompleted ? "Yes" : "No"}</p>
-          <p>Archived: {task.isArchived ? "Yes" : "No"}</p> */}
-        <Link to={`/tasks/${task._id}`}>
-          <button>view</button>
-        </Link>
-        <button onClick={() => handleDeleteTask(task)}>delete</button>
-        <button onClick={() => handleCompleteTask(task)}>
-          toggle complete
-        </button>
-        <button onClick={() => handleArchiveTask(task)}>toggle archive</button>
-      </div>
+      <section className="border-2 my-2">
+        {/* <div className="flex place-items-center"> */}
+        {checkBox}
+        {titleEl}
+        {/* </div> */}
+        {saveButton}
+        {editButton}
+        <div className="flex-row space-x-3">
+          {viewDetailButton}
+          {deleteButton}
+          {archiveButton}
+        </div>
+      </section>
     </>
   )
 }

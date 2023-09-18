@@ -16,16 +16,10 @@ const Navbar = () => {
       ["/tasks", "View all tasks"],
       ["/tasks/new", "Add task"],
       ["/archive", "Archive"]
-      // { link: "/account", text: "Home" },
-      // { link: "/tasks", text: "View all tasks" },
-      // { link: "/tasks/new", text: "Add task" },
-      // { link: "/archive", text: "Archive" }
     ],
     default: [
       ["/login", "Log In"],
       ["/signup", "Sign Up"]
-      // { link: "/login", text: "Log in" },
-      // { link: "/signup", text: "Sign up" }
     ]
   }
 
@@ -34,8 +28,8 @@ const Navbar = () => {
   return (
     <div>
       <nav className="flex-col flex-grow hidden pb-4 md:pb-0 md:flex md:justify-end md:flex-row">
-       <a></a>
-       {currentView.map(([url, title]) => (
+        <a></a>
+        {currentView.map(([url, title]) => (
           <NavLink
             key={title}
             to={url}

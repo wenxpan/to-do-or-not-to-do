@@ -11,7 +11,7 @@ import Navbar from "./components/Navbar"
 import Archive from "./pages/Archive"
 import NewTask from "./pages/NewTask"
 import Login from "./pages/Login"
-import { getHelper } from "./services/apiHelper"
+import { apiGet } from "./services/apiHelper"
 import UserContext from "./contexts/UserContext"
 import Signup from "./pages/Signup"
 import Landing from "./pages/Landing"
@@ -27,7 +27,7 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const data = await getHelper("/check-auth")
+        const data = await apiGet("/check-auth")
         if (data.success) {
           setUser({ ...data.user, isLoggedIn: true })
         } else {
@@ -44,6 +44,7 @@ function App() {
   useEffect(() => {
     const loadData = async () => {
       if (loaded && user.isLoggedIn) {
+        console.log("trying to get user tasks")
         const returnedTasks = await getTasks(user._id)
         tasksDispatch({ type: "set_tasks", tasks: returnedTasks })
       }
@@ -58,7 +59,7 @@ function App() {
 
   return (
     <>
-      <UserContext.Provider value={{ user, setUser, loaded }}>
+      <UserContext.Provider value={{ user, setUser, loaded, setLoaded }}>
         <TaskContext.Provider value={{ tasks, tasksDispatch }}>
           <Navbar />
           <Routes>
@@ -74,8 +75,8 @@ function App() {
                 <Route path="new" element={<NewTask />} />
                 <Route path=":id" element={<ShowTaskWrapper />} />
               </Route>
+              <Route path="archive" element={<Archive />} />
             </Route>
-            <Route path="archive" element={<Archive />} />
           </Routes>
         </TaskContext.Provider>
       </UserContext.Provider>

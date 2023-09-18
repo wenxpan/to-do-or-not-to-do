@@ -13,15 +13,17 @@ const AllTasks = () => {
   )
   return (
     <>
-      <h2>All To-dos</h2>
-      <AddTaskLine />
-      {todoTasks.map((t) => (
-        <TaskLine key={t._id} task={t} />
-      ))}
-      <h2>Completed</h2>
-      {completedTasks.map((t) => (
-        <TaskLine key={t._id} task={t} />
-      ))}
+      <h1 className="text-xl font-semibold">All To-dos</h1>
+      <div className="container sm mx-auto">
+        <AddTaskLine />
+        {todoTasks.map((t) => (
+          <TaskLine key={t._id} task={t} />
+        ))}
+        <h2>Completed</h2>
+        {completedTasks.map((t) => (
+          <TaskLine key={t._id} task={t} />
+        ))}
+      </div>
     </>
   )
 }
